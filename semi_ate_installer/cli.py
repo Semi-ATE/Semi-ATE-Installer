@@ -1,4 +1,4 @@
-from environment.handler import Environment, EnvironmentHandler
+from environment.handler import EnvironmentHandler
 import questionary
 import pyfiglet
 from channel.repository import Repository
@@ -7,26 +7,9 @@ from semi_ate_installer.state.state_machine import NewEnvSM
 from semi_ate_installer.state.base import State
 
 
-def select_environment() -> Environment:
-    existing_envs = EnvironmentHandler().get_available_environments()
-    selectable_envs = [e.name for e in existing_envs]
-    selected_env = questionary.select('Select environment of interest', selectable_envs).ask()
-    return next(e for e in existing_envs if e.name == selected_env)
-
-
 def print_semi_ate_installer_banner():
     ascii_banner = pyfiglet.figlet_format('SemiATE Installer')
     print(ascii_banner)
-
-
-# step 1: create (a) or use available (b) env ?
-# step 2.a: set name -> select profile
-# step 2.b: select name
-# done
-
-
-
-
 
 
 def main():

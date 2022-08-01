@@ -1,8 +1,6 @@
 from setuptools import find_packages, setup
 from pathlib import Path
-from ate_common import __version__
 
-version = __version__
 requirements_path = Path(Path(__file__).parents[0], 'requirements/run.txt')
 
 with requirements_path.open('r') as f:
@@ -11,7 +9,7 @@ with requirements_path.open('r') as f:
 
 setup(
     name='semi-ate-installer',
-    version=version,
+    version='0.0.0',
     description='Common package of ATE Projects',
     long_description='',
     long_description_content_type='text/markdown',

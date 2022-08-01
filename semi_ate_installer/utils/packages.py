@@ -3,30 +3,36 @@ from enum import Enum
 from numbers import Number
 from typing import List
 
-
-class SemiAtePackage(Enum):
-    Common = 'semi-ate-common'
-    ProjectDatabase = 'semi-ate-project-database'
-    Sammy = 'semi-ate-sammy'
-    Plugins = 'semi-ate-plugins'
-    Spyder = 'semi-ate-spyder'    
-    Testers = 'semi-ate-testers'
-    AppsCommon = 'semi-ate-apps-common'
-    ControlApp = 'semi-ate-control-app'
-    MasterApp = 'semi-ate-master-app'
-    TestApp = 'semi-ate-test-app'
-
-    def __call__(self) -> str:
-        return self.value
+from semi_ate_installer.utils import BaseDataClass
 
 
-class RequiredPackage(Enum):
-    Spyder = 'spyder'
-    Mosquitto = 'mosquitto'
-    SemiAteStdf = 'semi-ate-stdf'
+class PackageHandler:
+    @staticmethod
+    def get_test_program_developer_packages() -> List[str]:
+        packages = SemiAtePackage.get_fields()
+        packages.extend(RequiredPackage.get_fields())
+        return packages
 
-    def __call__(self) -> str:
-        return self.value
+
+@dataclass
+class SemiAtePackage(BaseDataClass):
+    Common: str = 'semi-ate-common'
+    ProjectDatabase: str = 'semi-ate-project-database'
+    Sammy: str = 'semi-ate-sammy'
+    Plugins: str = 'semi-ate-plugins'
+    Spyder: str = 'semi-ate-spyder'    
+    Testers: str = 'semi-ate-testers'
+    AppsCommon: str = 'semi-ate-apps-common'
+    ControlApp: str = 'semi-ate-control-app'
+    MasterApp: str = 'semi-ate-master-app'
+    TestApp: str = 'semi-ate-test-app'
+
+
+@dataclass
+class RequiredPackage(BaseDataClass):
+    Spyder: str = 'spyder'
+    Mosquitto: str = 'mosquitto'
+    SemiAteStdf: str = 'semi-ate-stdf'
 
 
 @dataclass

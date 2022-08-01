@@ -1,8 +1,10 @@
+from dataclasses import dataclass, fields
 from enum import Enum
+from typing import List
 
-class Profile(Enum):
+from semi_ate_installer.utils import BaseDataClass
 
-    TestProgramDeveloper = 'test program developer'
 
-    def __call__(self):
-        return self.value
+@dataclass
+class Profiles(BaseDataClass):
+    TestProgramDeveloper: str = 'test program developer'

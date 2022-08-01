@@ -1,10 +1,14 @@
 from enum import IntEnum
 from typing import List
-from environment.handler import Environment, EnvironmentHandler
+from environment.handler import EnvironmentHandler, HandlerType
 import questionary
 from questionary import Choice
+from semi_ate_installer.utils.profiles import Profiles
 
 from semi_ate_installer.state.base import BaseState, BaseStateMachine, BaseStateWithInput, State
+
+
+HANDLER_TYPE = HandlerType.Mamba
 
 
 class InitOptions(IntEnum):
@@ -12,18 +16,20 @@ class InitOptions(IntEnum):
     Exist = 1
 
 
-# check for empty selection lists
+class YesNoOption(IntEnum):
+    No = 0
+    Yes = 1
+
 
 class Init(BaseState):
     def next(self) -> BaseState:
-        new = Choice('create new env', value=InitOptions.New)
-        exist = Choice('select env', value=InitOptions.Exist)
+        new = Choice('create new environment: ', value=InitOptions.New)
+        exist = Choice('list available environments: ', value=InitOptions.Exist)
         option = questionary.select('select option: ', [new, exist], ).ask()
 
         if option == InitOptions.Exist:
             existing_envs = EnvironmentHandler.get_available_environments()
-            selectable_envs = [e.name for e in existing_envs]
-            return SelectEnv(selectable_envs)
+            return SelectEnv(existing_envs)
         else:
             return NewEnv()
 
@@ -34,8 +40,29 @@ class SelectEnv(BaseStateWithInput):
         self.env_list = env_list
 
     def next(self):
-        selected_env = questionary.select('Select environment of interest', self.env_list).ask()
-        return ActivateEnv(selected_env)
+        selected_env = questionary.select('select environment of interest', self.env_list).ask()
+        return CheckUpdate(selected_env)
+
+
+class CheckUpdate(BaseStateWithInput):
+    def __init__(self, env_name: str):
+        super().__init__(env_name)
+        self.env_name = env_name
+
+    def next(self):
+        is_updates_available = False
+        if is_updates_available:
+            no = Choice('yes:', value=YesNoOption.No)
+            yes = Choice('no:', value=YesNoOption.Yes)
+            option = questionary.select('updates are available, do update:', [no, yes], ).ask()
+
+            if option == YesNoOption.Yes:
+                is_updates_available = True
+
+            ''' do update'''
+            # TODO: update shall be handled in different issue
+
+        return EnvSelected(self.env_name)
 
 
 class NewEnv(BaseState):
@@ -43,13 +70,16 @@ class NewEnv(BaseState):
 
     def next(self) -> BaseState:
         env_name = questionary.text('insert the new environment name:', validate=lambda input: input is not None).ask()
-        existing_envs = [env.name for env in EnvironmentHandler.get_available_environments()]
+        if not env_name:
+            print(f'environment name is empty')
+            return None
 
+        existing_envs = EnvironmentHandler.get_available_environments()
         if env_name in existing_envs:
             print(f'environment: \'{env_name}\' exists already')
             return None
 
-        return ActivateEnv(env_name)
+        return SelectProfile(env_name)
 
 
 class SelectProfile(BaseStateWithInput):
@@ -58,8 +88,7 @@ class SelectProfile(BaseStateWithInput):
         self.env_name = env_name
 
     def next(self) -> BaseState:
-        all_profiles = []
-        selected_profile = questionary.select('Select environment of interest', all_profiles).ask()
+        selected_profile = questionary.select('Select environment of interest', Profiles.get_fields()).ask()
         return CreateEnv(self.env_name, selected_profile)
 
 
@@ -70,16 +99,24 @@ class CreateEnv(BaseStateWithInput):
         self.profile = profile
 
     def next(self) -> BaseState:
-        return ActivateEnv(self.env_name)
+        packages = EnvironmentHandler.get_packages(self.profile)
+        EnvironmentHandler.create_env(HANDLER_TYPE, self.env_name)
+        EnvironmentHandler.install_packages(HANDLER_TYPE, self.env_name, packages)
+
+        print(f'env: {self.env_name} is created')
+
+        return EnvSelected(self.env_name)
 
 
-class ActivateEnv(BaseStateWithInput):
+class EnvSelected(BaseStateWithInput):
     def __init__(self, env_name: str) -> None:
         super().__init__(env_name)
         self.env_name = env_name
 
     def next(self) -> BaseState:
-        print(f'env: {self.env_name} is activated :)')
+        print(f'''activate the environment with the following command
+            $ conda activate {self.env_name}
+        ''')
         return Done()
 
 
@@ -96,5 +133,4 @@ class NewEnvSM(BaseStateMachine):
         self.state = self.state.next()
 
     def is_done(self) -> State:
-        print(self.state)
         return State.Done if self.state is None else State.Next

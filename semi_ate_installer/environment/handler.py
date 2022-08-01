@@ -1,32 +1,23 @@
-from numbers import Number
+from enum import IntEnum
 import sys
-from typing import List
+from typing import List, Tuple
 import re
 from conda.cli.python_api import Commands, run_command
 from utils.packages import RequiredPackage, SemiAtePackage, InstalledPackageInfo
 
-class Environment:
+from semi_ate_installer.utils.profiles import Profiles
+from semi_ate_installer.utils.packages import PackageHandler
 
-    name: str
-    path: str
 
-    semi_ate_packages: List[InstalledPackageInfo]
-    required_packages: List[InstalledPackageInfo]
+class HandlerType(IntEnum):
+    Mamba = 0
+    Conda = 1
 
-    def __init__(self, name: str, path: str):
-        self.name = name
-        self.path = path
-        self.semi_ate_packages = []
-        self.required_packages = []
 
-    def __repr__(self) -> str:
-        return self.__str__()
-
-    def __str__(self) -> str:
-        return (f'{self.name} ({self.path})')
-
-    def get_installed_packages(self) -> None:
-        result = run_command(Commands.LIST, '-n', f'{self.name}', use_exception_handler=False)
+class EnvironmentHandler:
+    @staticmethod
+    def get_installed_packages(env_name: str) -> Tuple[List[str], List[str]]:
+        result = run_command(Commands.LIST, '-n', env_name, use_exception_handler=False)
         # remove first three lines
         temp = re.sub(r'#.*\n', '', result[0])
         # replace spaces by *
@@ -41,21 +32,22 @@ class Environment:
 
         temp = temp.split(';')
 
-        all_packages = [InstalledPackageInfo(e.split('*')[0], e.split('*')[1]) for e in temp ]
+        all_packages = [InstalledPackageInfo(e.split('*')[0], e.split('*')[1]) for e in temp]
 
-        self.semi_ate_packages = list(filter(lambda p: p.name in map(lambda n: n(),list(SemiAtePackage)), all_packages))
-        self.required_packages = list(filter(lambda p: p.name in map(lambda n: n(),list(RequiredPackage)), all_packages))
-    
-    def install_packages(self, packages: List[str]) -> None:
-        run_command(Commands.INSTALL, '-n', f'{self.name}', *packages, '-y', use_exception_handler=False, stdout=sys.stdout)
+        semi_ate_packages = list(filter(lambda p: p.name in map(lambda n: n(), list(SemiAtePackage)), all_packages))
+        required_packages = list(filter(lambda p: p.name in map(lambda n: n(), list(RequiredPackage)), all_packages))
 
-    def uninstall_package(package: str) -> None:
-        pass
+        return semi_ate_packages, required_packages
 
-class EnvironmentHandler:
     @staticmethod
-    def get_available_environments() -> List[Environment]:
+    def install_packages(handler_type: HandlerType, env_name: str, packages: List[str]) -> None:
+        if handler_type == HandlerType.Mamba:
+            MambaEnvHandler.create_env(env_name, packages)
+        else:
+            CondaEnvHandler.create_env(env_name, packages)
 
+    @staticmethod
+    def get_available_environments() -> List[str]:
         environments = run_command(Commands.INFO, '--envs')
         # remove first two lines
         temp = environments[0].split("\n",2)[2]
@@ -71,7 +63,45 @@ class EnvironmentHandler:
         if temp[len(temp) - 1] == ';':
             temp = temp[:-1]
 
-        envs = temp.split(';')
+        return [path.split('*')[0] for path in temp.split(';')]
 
-        return [Environment(e.split('*')[0], e.split('*')[1]) for e in envs ]
+    @staticmethod
+    def create_env(handler_type: HandlerType, env_name: str, packages: List[str] = []):
+        if handler_type == HandlerType.Mamba:
+            MambaEnvHandler.create_env(env_name, packages)
+        else:
+            CondaEnvHandler.create_env(env_name, packages)
 
+    @staticmethod
+    def get_packages(profile: str) -> List[str]:
+        return {
+            Profiles.TestProgramDeveloper: PackageHandler.get_test_program_developer_packages
+        }[profile]()
+
+    @staticmethod
+    def activate_env(env_name: str):
+        ''''''
+
+
+class MambaEnvHandler:
+    @staticmethod
+    def create_env(env_name: str, packages: List[str] = []):
+        from mamba.api import create
+        create(env_name, specs=tuple(packages), channels=('conda-forge', ))
+
+    @staticmethod
+    def install_packages(env_name: str, packages: List[str]):
+        from mamba.api import install
+        install(env_name, specs=tuple(packages), channels=('conda-forge', ))
+
+
+class CondaEnvHandler:
+    @staticmethod
+    def create_env(env_name: str, packages: List[str] =[]):
+        from conda.cli.python_api import Commands, run_command
+        run_command(Commands.CREATE, '-n', env_name, 'python=3', *packages, '-y', use_exception_handler=False, stdout=sys.stdout)
+
+    @staticmethod
+    def install_packages(env_name: str, packages: List[str]):
+        from conda.cli.python_api import Commands, run_command
+        run_command(Commands.INSTALL, '-n', env_name, *packages, '-y', use_exception_handler=False, stdout=sys.stdout)
