@@ -1,10 +1,10 @@
 from enum import IntEnum
 from typing import List
-from environment.handler import EnvironmentHandler, HandlerType
 import questionary
 from questionary import Choice
-from semi_ate_installer.utils.profiles import Profiles
 
+from semi_ate_installer.environment.handler import EnvironmentHandler, HandlerType, PackageHandler
+from semi_ate_installer.utils.profiles import Profiles
 from semi_ate_installer.state.base import BaseState, BaseStateMachine, BaseStateWithInput, State
 
 
@@ -41,28 +41,37 @@ class SelectEnv(BaseStateWithInput):
 
     def next(self):
         selected_env = questionary.select('select environment of interest', self.env_list).ask()
-        return CheckUpdate(selected_env)
+        return CheckPackagesUpdate(selected_env)
 
 
-class CheckUpdate(BaseStateWithInput):
+class CheckPackagesUpdate(BaseStateWithInput):
     def __init__(self, env_name: str):
         super().__init__(env_name)
         self.env_name = env_name
 
     def next(self):
-        is_updates_available = False
+        is_updates_available = EnvironmentHandler.are_updates_available(self.env_name)
         if is_updates_available:
-            no = Choice('yes:', value=YesNoOption.No)
-            yes = Choice('no:', value=YesNoOption.Yes)
-            option = questionary.select('updates are available, do update:', [no, yes], ).ask()
-
-            if option == YesNoOption.Yes:
-                is_updates_available = True
-
-            ''' do update'''
-            # TODO: update shall be handled in different issue
+            return UpdatePackages(self.env_name)
 
         return EnvSelected(self.env_name)
+
+class UpdatePackages(BaseStateWithInput):
+    def __init__(self, env_name: str):
+        super().__init__(env_name)
+        self.env_name = env_name
+
+    def next(self):
+        no = Choice('yes:', value=YesNoOption.No)
+        yes = Choice('no:', value=YesNoOption.Yes)
+        option = questionary.select('updates are available, do update:', [no, yes], ).ask()
+
+        if option == YesNoOption.Yes:
+            is_updates_available = True
+
+        ''' do update'''
+        # TODO: update shall be handled in different issue
+        ''''''
 
 
 class NewEnv(BaseState):
@@ -114,9 +123,7 @@ class EnvSelected(BaseStateWithInput):
         self.env_name = env_name
 
     def next(self) -> BaseState:
-        print(f'''activate the environment with the following command
-            $ conda activate {self.env_name}
-        ''')
+        EnvironmentHandler.print_activate(self.env_name)
         return Done()
 
 

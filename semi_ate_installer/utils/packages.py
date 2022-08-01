@@ -4,14 +4,16 @@ from numbers import Number
 from typing import List
 
 from semi_ate_installer.utils import BaseDataClass
+# from semi_ate_installer.channel.repository import Repository
 
 
-class PackageHandler:
-    @staticmethod
-    def get_test_program_developer_packages() -> List[str]:
-        packages = SemiAtePackage.get_fields()
-        packages.extend(RequiredPackage.get_fields())
-        return packages
+@dataclass
+class PackageInfo:
+    name: str
+    version: str
+
+    def __hash__(self) -> Number:
+        return len(self.name) + len(self.version)
 
 
 @dataclass
@@ -33,21 +35,3 @@ class RequiredPackage(BaseDataClass):
     Spyder: str = 'spyder'
     Mosquitto: str = 'mosquitto'
     SemiAteStdf: str = 'semi-ate-stdf'
-
-
-@dataclass
-class InstalledPackageInfo:
-    name: str
-    version: str
-
-
-@dataclass
-class AvailablePackageInfo:
-    name: str
-    versions: set
-
-    def __eq__(self, other) -> bool:
-        return self.name == other.name
-
-    def __hash__(self) -> Number:
-        return len(self.name) + len(self.versions)

@@ -13,7 +13,7 @@ def print_semi_ate_installer_banner():
 
 
 def main():
-    # available_packages = Repository().get_available_versions('^(semi-ate-apps-common|semi-ate-common)$')
+    # available_packages = Repository().get_available_versions('^(semi-ate-apps-common|semi-ate-common|semi-ate-master-app)$')
     # for a in available_packages:
     #     print(a)
     print_semi_ate_installer_banner()

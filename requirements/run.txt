@@ -1,3 +1,4 @@
 questionary
 pyfiglet
 mamba
+conda

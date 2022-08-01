@@ -3,10 +3,11 @@ import sys
 from typing import List, Tuple
 import re
 from conda.cli.python_api import Commands, run_command
-from utils.packages import RequiredPackage, SemiAtePackage, InstalledPackageInfo
+from mamba.utils import print_activate
+from semi_ate_installer.channel.repository import Repository
 
+from semi_ate_installer.utils.packages import RequiredPackage, SemiAtePackage, PackageInfo
 from semi_ate_installer.utils.profiles import Profiles
-from semi_ate_installer.utils.packages import PackageHandler
 
 
 class HandlerType(IntEnum):
@@ -32,7 +33,7 @@ class EnvironmentHandler:
 
         temp = temp.split(';')
 
-        all_packages = [InstalledPackageInfo(e.split('*')[0], e.split('*')[1]) for e in temp]
+        all_packages = [PackageInfo(e.split('*')[0], e.split('*')[1]) for e in temp]
 
         semi_ate_packages = list(filter(lambda p: p.name in map(lambda n: n(), list(SemiAtePackage)), all_packages))
         required_packages = list(filter(lambda p: p.name in map(lambda n: n(), list(RequiredPackage)), all_packages))
@@ -79,8 +80,14 @@ class EnvironmentHandler:
         }[profile]()
 
     @staticmethod
-    def activate_env(env_name: str):
-        ''''''
+    def print_activate(env_name: str):
+        print_activate(env_name)
+
+    @staticmethod
+    def are_updates_available(env_name: str) -> bool:
+        available_packages = PackageHandler.get_available_packages_version(SemiAtePackage.get_fields())
+        print(available_packages)
+        return False
 
 
 class MambaEnvHandler:
@@ -105,3 +112,23 @@ class CondaEnvHandler:
     def install_packages(env_name: str, packages: List[str]):
         from conda.cli.python_api import Commands, run_command
         run_command(Commands.INSTALL, '-n', env_name, *packages, '-y', use_exception_handler=False, stdout=sys.stdout)
+
+
+class PackageHandler:
+    @staticmethod
+    def get_test_program_developer_packages() -> List[str]:
+        packages = SemiAtePackage.get_fields()
+        packages.extend(RequiredPackage.get_fields())
+        return packages
+
+    @staticmethod
+    def get_available_packages_version(packages: List[str]) -> List[PackageInfo]:
+        joined_packages = '^('
+        joined_packages += '|'.join([package for package in packages])
+        joined_packages += ')$'
+        print(Repository.get_available_versions(joined_packages))
+        # TODO: compare with those whom are installed
+
+    @staticmethod
+    def get_installed_packages(env_name: str) -> List[PackageInfo]:
+        pass
