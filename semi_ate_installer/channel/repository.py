@@ -3,10 +3,10 @@ from typing import List
 from mamba import repoquery as repoquery_api
 from conda.base.context import context
 from json import loads
-from semi_ate_installer.utils.packages import PackageInfo
 
 from packaging import version
 
+from semi_ate_installer.utils.packages import PackageInfo
 
 class Repository:
     @staticmethod
@@ -26,12 +26,12 @@ class Repository:
         for name, vers in packages.items():
             highest_version = version.parse('0.0.0')
             for ver1, ver2 in itertools.combinations(vers, 2):
-                version_item1 = version.parse(ver1)
-                version_item2 = version.parse(ver2)
-                if version_item1 > version_item2 and version_item1 > highest_version:
-                    highest_version = version_item1
-                elif version_item1 < version_item2 and version_item2 > highest_version:
-                    highest_version = version_item2
+                ver1_obj = version.parse(ver1)
+                ver2_obj = version.parse(ver2)
+                if ver1_obj > ver2_obj and ver1_obj > highest_version:
+                    highest_version = ver1_obj
+                elif ver1_obj < ver2_obj and ver2_obj > highest_version:
+                    highest_version = ver2_obj
                 else:
                     continue
 
