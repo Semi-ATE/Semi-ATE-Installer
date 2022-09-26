@@ -41,7 +41,7 @@ class SelectEnv(BaseStateWithInput):
         super().__init__(env_list)
         self.env_list = env_list
 
-    def next(self):
+    def next(self) -> BaseState:
         selected_env = questionary.select('select environment of interest', self.env_list).ask()
         return CheckPackagesUpdate(selected_env)
 
@@ -51,7 +51,7 @@ class CheckPackagesUpdate(BaseStateWithInput):
         super().__init__(env_name)
         self.env_name = env_name
 
-    def next(self):
+    def next(self) -> BaseState:
         available_updates = EnvironmentHandler.get_available_updates(self.env_name)
         if available_updates:
             return UpdatePackages(self.env_name, available_updates)
@@ -64,7 +64,7 @@ class UpdatePackages(BaseStateWithInput):
         self.env_name = env_name
         self.available_updates = available_updates
 
-    def next(self):
+    def next(self) -> BaseState:
         print('update for the following packages is available: ')
         for available_update in self.available_updates:
             print(f'{available_update[0]}: {available_update[1]} -> {available_update[2]}')
@@ -81,8 +81,6 @@ class UpdatePackages(BaseStateWithInput):
 
 
 class NewEnv(BaseState):
-    def __init__(self) -> None: pass
-
     def next(self) -> BaseState:
         env_name = questionary.text('insert the new environment name:', validate=lambda input: input is not None).ask()
         if not env_name:
@@ -98,7 +96,7 @@ class NewEnv(BaseState):
 
 
 class SelectProfile(BaseStateWithInput):
-    def __init__(self, env_name: str) -> None:
+    def __init__(self, env_name: str):
         super().__init__(env_name)
         self.env_name = env_name
 
@@ -108,7 +106,7 @@ class SelectProfile(BaseStateWithInput):
 
 
 class CreateEnv(BaseStateWithInput):
-    def __init__(self, env_name: str, profile: str) -> None:
+    def __init__(self, env_name: str, profile: str):
         super().__init__(env_name, profile)
         self.env_name = env_name
         self.profile = profile
@@ -121,7 +119,7 @@ class CreateEnv(BaseStateWithInput):
 
 
 class EnvSelected(BaseStateWithInput):
-    def __init__(self, env_name: str) -> None:
+    def __init__(self, env_name: str):
         super().__init__(env_name)
         self.env_name = env_name
 
@@ -136,11 +134,12 @@ class Done(BaseState):
 
 
 class NewEnvSM(BaseStateMachine):
-    def __init__(self) -> None:
+    def __init__(self):
         self.state = Init()
 
     def next(self) -> BaseState:
         self.state = self.state.next()
+        return None
 
     def is_done(self) -> State:
         return State.Done if self.state is None else State.Next

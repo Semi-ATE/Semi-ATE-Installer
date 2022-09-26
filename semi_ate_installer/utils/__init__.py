@@ -6,4 +6,4 @@ from typing import List
 class BaseDataClass:
     @classmethod
     def get_fields(cls) -> List[str]:
-        return [getattr(cls, profile.name) for profile in fields(cls)]
+        return [getattr(cls, field.name) for field in fields(cls)]
