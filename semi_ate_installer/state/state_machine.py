@@ -6,7 +6,6 @@ from packaging import version
 
 from semi_ate_installer.environment.handler import EnvironmentHandler, HandlerType
 from semi_ate_installer.utils.profiles import Profiles
-from semi_ate_installer.utils.packages import PackageInfo
 from semi_ate_installer.state.base import BaseState, BaseStateMachine, BaseStateWithInput, State
 
 
