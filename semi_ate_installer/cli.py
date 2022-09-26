@@ -1,6 +1,6 @@
 import pyfiglet
 
-from semi_ate_installer.state.state_machine import EnvironmentStateMachine
+from semi_ate_installer.state.state_machine import NewEnvSM
 from semi_ate_installer.state.base import State
 
 
@@ -12,7 +12,7 @@ def print_semi_ate_installer_banner():
 def main():
     print_semi_ate_installer_banner()
 
-    state_machine = EnvironmentStateMachine()
+    state_machine = NewEnvSM()
     while state_machine.is_done() != State.Done:
         state_machine.next()
 

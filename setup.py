@@ -23,5 +23,8 @@ setup(
     classifiers=[
         'License :: OSI Approved :: GNU General Public License v2 (GPLv2)',
     ],
-    install_requires=install_requires
+    install_requires=install_requires,
+    entry_points={
+        'console_scripts': ['ate-installer=semi_ate_installer.cli:main']
+    },
 )
