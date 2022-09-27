@@ -1,20 +1,13 @@
-from enum import IntEnum
 import sys
 from typing import List, Tuple
 import re
 from conda.cli.python_api import Commands, run_command
-from mamba.mamba import print_activate
 
 from packaging import version
 
 from semi_ate_installer.channel.repository import Repository
 from semi_ate_installer.utils.packages import RequiredPackage, SemiAtePackage, PackageInfo
 from semi_ate_installer.utils.profiles import Profiles
-
-
-class HandlerType(IntEnum):
-    Mamba = 0
-    Conda = 1
 
 
 class EnvironmentHandler:
@@ -39,11 +32,8 @@ class EnvironmentHandler:
         return all_packages
 
     @staticmethod
-    def install_packages(handler_type: HandlerType, env_name: str, packages: List[str]) -> None:
-        if handler_type == HandlerType.Mamba:
-            MambaEnvHandler.install_packages(env_name, packages)
-        else:
-            CondaEnvHandler.install_packages(env_name, packages)
+    def install_packages(env_name: str, packages: List[str]) -> None:
+        CondaEnvHandler.install_packages(env_name, packages)
 
     @staticmethod
     def get_available_environments() -> List[str]:
@@ -65,11 +55,8 @@ class EnvironmentHandler:
         return [path.split('*')[0] for path in temp.split(';')]
 
     @staticmethod
-    def create_env(handler_type: HandlerType, env_name: str, packages: List[str] = []):
-        if handler_type == HandlerType.Mamba:
-            MambaEnvHandler.create_env(env_name, packages)
-        else:
-            CondaEnvHandler.create_env(env_name, packages)
+    def create_env(env_name: str, packages: List[str] = []):
+        CondaEnvHandler.create_env(env_name, packages)
 
     @staticmethod
     def get_packages(profile: str) -> List[str]:
@@ -79,7 +66,13 @@ class EnvironmentHandler:
 
     @staticmethod
     def print_activate(env_name: str):
-        print_activate(env_name)
+        message = (
+            "\nTo activate this environment, use\n\n"
+            f"     $ conda activate {env_name}\n\n"
+            "To deactivate an active environment, use\n\n"
+            "     $ conda deactivate\n"
+        )
+        print(message)
 
     @staticmethod
     def get_packages_with_version(package_names: List[str]) -> List[PackageInfo]:
@@ -150,23 +143,8 @@ class EnvironmentHandler:
         return Repository.get_available_versions(joined_packages)
 
     @staticmethod
-    def install_packages(handler_type: HandlerType, env_name: str, packages: List[str]):
-        if handler_type == HandlerType.Mamba:
-            MambaEnvHandler.install_packages(env_name, packages)
-        else:
-            CondaEnvHandler.install_packages(env_name, packages)
-
-
-class MambaEnvHandler:
-    @staticmethod
-    def create_env(env_name: str, packages: List[str] = []):
-        from mamba.api import create
-        create(env_name, specs=tuple(packages), channels=('conda-forge', ))
-
-    @staticmethod
     def install_packages(env_name: str, packages: List[str]):
-        from mamba.api import install
-        install(env_name, specs=tuple(packages), channels=('conda-forge', ))
+        CondaEnvHandler.install_packages(env_name, packages)
 
 
 class CondaEnvHandler:

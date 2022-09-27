@@ -1,7 +1,5 @@
 from dataclasses import dataclass
-from enum import Enum
 from numbers import Number
-from typing import List
 
 from semi_ate_installer.utils import BaseDataClass
 
