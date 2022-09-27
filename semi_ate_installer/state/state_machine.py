@@ -73,7 +73,7 @@ class UpdatePackages(BaseStateWithInput):
             return EnvSelected(self.env_name)
 
         package_to_update = [f'{name}={str(info.version)}' for name, _, info in self.available_updates]
-        EnvironmentHandler.install_packages(HANDLER_TYPE, self.env_name, package_to_update)
+        EnvironmentHandler.install_packages(self.env_name, package_to_update)
 
 
 class NewEnv(BaseState):
@@ -109,8 +109,8 @@ class CreateEnv(BaseStateWithInput):
 
     def next(self) -> BaseState:
         packages = EnvironmentHandler.get_packages(self.profile)
-        EnvironmentHandler.create_env(HANDLER_TYPE, self.env_name)
-        EnvironmentHandler.install_packages(HANDLER_TYPE, self.env_name, EnvironmentHandler.get_packages_with_version(packages))
+        EnvironmentHandler.create_env(self.env_name)
+        EnvironmentHandler.install_packages(self.env_name, EnvironmentHandler.get_packages_with_version(packages))
         return EnvSelected(self.env_name)
 
 
