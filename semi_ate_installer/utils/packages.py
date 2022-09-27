@@ -17,6 +17,11 @@ class PackageInfo:
 
 @dataclass
 class SemiAtePackage(BaseDataClass):
+    APP_Common: str = 'semi-ate-apps-common'
+    Common: str = 'semi-ate-common'
+    Plugins: str = 'semi-ate-plugins'
+    Database: str = 'semi-ate-project-database'
+    Sammy: str = 'semi-ate-sammy'
     Spyder: str = 'semi-ate-spyder'    
     Testers: str = 'semi-ate-testers'
     ControlApp: str = 'semi-ate-control-app'

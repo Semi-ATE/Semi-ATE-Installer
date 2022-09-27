@@ -41,9 +41,9 @@ class EnvironmentHandler:
     @staticmethod
     def install_packages(handler_type: HandlerType, env_name: str, packages: List[str]) -> None:
         if handler_type == HandlerType.Mamba:
-            MambaEnvHandler.create_env(env_name, packages)
+            MambaEnvHandler.install_packages(env_name, packages)
         else:
-            CondaEnvHandler.create_env(env_name, packages)
+            CondaEnvHandler.install_packages(env_name, packages)
 
     @staticmethod
     def get_available_environments() -> List[str]:
@@ -82,6 +82,19 @@ class EnvironmentHandler:
         print_activate(env_name)
 
     @staticmethod
+    def get_packages_with_version(package_names: List[str]) -> List[PackageInfo]:
+        available_packages = [package_info for package_info in EnvironmentHandler.get_available_packages_version(package_names) if package_info.name in SemiAtePackage.get_fields()]
+        available_packages_dict = {package.name: package for package in available_packages}
+        minor_package_version = EnvironmentHandler._get_minor_package_version(available_packages_dict)
+        package_list = []
+
+        package_list = [f'{package_name}={minor_package_version.version}' for package_name in SemiAtePackage.get_fields()]
+        rest_packages = set(package_names) - set(SemiAtePackage.get_fields())
+        package_list.extend(rest_packages)
+
+        return package_list
+
+    @staticmethod
     def get_available_updates(env_name: str) -> List[Tuple[str, version.Version, version.Version]]:
         all_package_names = SemiAtePackage.get_fields()
         all_package_names.extend(RequiredPackage.get_fields())
@@ -93,19 +106,35 @@ class EnvironmentHandler:
 
         available_packages_dict = {package.name: package for package in available_packages}
         installed_packages_dict = {package.name: package for package in installed_packages}
+
+        minor_package_version = EnvironmentHandler._get_minor_package_version(available_packages_dict)
         
         to_update = []
 
-        for package_name, available_package in available_packages_dict.items():
+        for package_name, _ in available_packages_dict.items():
+            if package_name not in SemiAtePackage.get_fields():
+                continue
+
             installed_package = installed_packages_dict.get(package_name)
             if not installed_package:
                 # is it an issue if packages are not available ??
                 continue
 
-            if installed_package.version < available_package.version:
-                to_update.append((available_package.name, installed_package.version, available_package.version))
+            if installed_package.version != minor_package_version.version:
+                to_update.append((package_name, installed_package.version, minor_package_version))
 
         return to_update
+
+    def _get_minor_package_version(available_packages: dict):
+        from functools import reduce
+        only_semi_ate_packages = filter(lambda package: package.name in SemiAtePackage.get_fields(), available_packages.values())
+        def compare(lhs: PackageInfo, rhs: PackageInfo) -> bool:
+            if lhs.version < rhs.version:
+                return lhs
+
+            return rhs
+
+        return reduce(compare, only_semi_ate_packages)
 
     @staticmethod
     def get_test_program_developer_packages() -> List[str]:

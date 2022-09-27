@@ -9,7 +9,7 @@ from semi_ate_installer.utils.profiles import Profiles
 from semi_ate_installer.state.base import BaseState, BaseStateMachine, BaseStateWithInput, State
 
 
-HANDLER_TYPE = HandlerType.Mamba
+HANDLER_TYPE = HandlerType.Conda
 
 
 class InitOptions(IntEnum):
@@ -75,7 +75,7 @@ class UpdatePackages(BaseStateWithInput):
         if option == YesNoOption.No:
             return EnvSelected(self.env_name)
 
-        package_to_update = [name for name, _, _ in self.available_updates]
+        package_to_update = [f'{name}={str(info.version)}' for name, _, info in self.available_updates]
         EnvironmentHandler.install_packages(HANDLER_TYPE, self.env_name, package_to_update)
 
 
@@ -113,7 +113,7 @@ class CreateEnv(BaseStateWithInput):
     def next(self) -> BaseState:
         packages = EnvironmentHandler.get_packages(self.profile)
         EnvironmentHandler.create_env(HANDLER_TYPE, self.env_name)
-        EnvironmentHandler.install_packages(HANDLER_TYPE, self.env_name, packages)
+        EnvironmentHandler.install_packages(HANDLER_TYPE, self.env_name, EnvironmentHandler.get_packages_with_version(packages))
         return EnvSelected(self.env_name)
 
 
