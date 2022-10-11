@@ -1,9 +1,7 @@
 [build-system]
-requires = ["setuptools>=42", "wheel"]
+requires = ["setuptools>=42", "wheel", "setuptools_scm[toml]>=6.2"]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools_scm]
-write_to = "pkg/_version.py"
 
 # black: https://black.readthedocs.io/en/stable/
 [tool.black]
