@@ -2,8 +2,6 @@
 requires = ["setuptools>=42", "wheel"]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools_scm]
-write_to = "pkg/_version.py"
 
 # black: https://black.readthedocs.io/en/stable/
 [tool.black]
