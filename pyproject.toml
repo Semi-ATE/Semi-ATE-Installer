@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools_scm]
+write_to = "pkg/_version.py"
+
+# black: https://black.readthedocs.io/en/stable/
+[tool.black]
+line-length = 88
+target-version = ['py39']
+include = '\.pyi?$'
+
+# isort: https://github.com/timothycrosley/isort/wiki/isort-Settings
+[tool.isort]
+profile = "black"
+
+# pytest: http://pytest.org/latest/customize.html#adding-default-options
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+# mypy: http://mypy.readthedocs.io/en/latest/config_file.html
+[tool.mypy]
+files = ["src", "tests"]
+ignore_missing_imports = true

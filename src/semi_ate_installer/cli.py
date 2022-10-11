@@ -5,7 +5,7 @@ from semi_ate_installer.state.base import State
 
 
 def print_semi_ate_installer_banner():
-    ascii_banner = pyfiglet.figlet_format('SemiATE Installer')
+    ascii_banner = pyfiglet.figlet_format("SemiATE Installer")
     print(ascii_banner)
 
 
@@ -17,5 +17,5 @@ def main():
         state_machine.next()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

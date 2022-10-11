@@ -7,4 +7,4 @@ from semi_ate_installer.utils import BaseDataClass
 
 @dataclass
 class Profiles(BaseDataClass):
-    TestProgramDeveloper: str = 'test program developer'
+    TestProgramDeveloper: str = "test program developer"

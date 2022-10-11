@@ -10,7 +10,7 @@ class State(IntEnum):
 
 class BaseState(ABC):
     @abstractclassmethod
-    def next(self) -> 'BaseState':
+    def next(self) -> "BaseState":
         pass
 
 
@@ -22,8 +22,8 @@ class BaseStateWithInput(BaseState):
 
 
 class BaseStateMachine(ABC):
-    def next(self) -> 'BaseState':
+    def next(self) -> "BaseState":
         pass
-    
+
     def is_done(self) -> State:
         pass
