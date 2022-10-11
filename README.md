@@ -20,3 +20,6 @@ The above commands will install a command line tool called `ate-installer` that 
 ## Future plans
 
 * The installer will become part of maxiconda. This will make the manual installation of the ate-installer obsolete.
+
+
+PR for feedstock : https://github.com/conda-forge/staged-recipes/pull/20724
