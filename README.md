@@ -8,9 +8,9 @@
 [![CI-CD](https://github.com/Semi-ATE/Semi-ATE-Installer/workflows/python-publish/badge.svg)](https://github.com/Semi-ATE/Semi-ATE-Installer/actions/workflows/python-publish.yml?query=workflow%3ACD)
 
 [![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/Semi-ATE/Semi-ATE-Installer?color=blue&label=GitHub&sort=semver)](https://github.com/Semi-ATE/Semi-ATE-Installer/releases/latest)
-[![GitHub commits since latest release (by date)](https://img.shields.io/github/commits-since/Semi-ATE/Semi-ATE/latest)](https://github.com/Semi-ATE/Semi-ATE)
-[![GitHub issues](https://img.shields.io/github/issues/Semi-ATE/Semi-ATE)](https://github.com/Semi-ATE/Semi-ATE/issues)
-[![GitHub pull requests](https://img.shields.io/github/issues-pr/Semi-ATE/Semi-ATE)](https://github.com/Semi-ATE/Semi-ATE/pulls)
+[![GitHub commits since latest release (by date)](https://img.shields.io/github/commits-since/Semi-ATE/Semi-ATE-Installer/latest)](https://github.com/Semi-ATE/Semi-ATE-Installer)
+[![GitHub issues](https://img.shields.io/github/issues/Semi-ATE/Semi-ATE-Installer)](https://github.com/Semi-ATE/Semi-ATE-Installer/issues)
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/Semi-ATE/Semi-ATE-Installer)](https://github.com/Semi-ATE/Semi-ATE-Installer/pulls)
 
 The installation package that will install the correct Semi-ATE packages depending on the use-case.
 
