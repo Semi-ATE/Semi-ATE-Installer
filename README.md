@@ -16,24 +16,10 @@
 
 The installation package that will install the correct Semi-ATE packages depending on the use-case.
 
-## Requirements
-
-Make sure that conda ist installed. The preferred way is to install [maxiconda](https://github.com/Semi-ATE/maxiconda) that brings `conda` to your system and also generates a small environment called _base_.
-
 ## Installation
 
-After checking out this repository perform the following steps in the root directory of the repository.
+Make sure that conda is installed. The preferred way is to install [maxiconda](https://github.com/Semi-ATE/maxiconda) that brings `conda` to your system and also generates a small environment called `base`. It is **IMPERATIVE** that this package is installed in the `base` environment. 
 
 1. `conda activate base`
-2. `python -m pip install .`
-
-The above commands will install a command line tool called `ate-installer` that can be used to generate environments that contain every package from the [Semi-ATE](https://github.com/Semi-ATE/Semi-ATE) project that are needed to develop and run test programs.
-
-**IMPORTANT** It is important to install and execute the ate-installer in the base environment.
-
-## Future plans
-
-* The installer will become part of maxiconda. This will make the manual installation of the ate-installer obsolete.
-
-
-PR for feedstock : https://github.com/conda-forge/staged-recipes/pull/20724
+2. `mamba install Semi-ATE-Installer`
+3. Execute `ate-installer` and follow the installer.
