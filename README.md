@@ -1,7 +1,5 @@
 # Semi-ATE-Installer
 
-
-
 [![GitHub](https://img.shields.io/github/license/Semi-ATE/Semi-ATE-installer?color=black)](https://github.com/Semi-ATE/Semi-ATE-Installer/blob/master/LICENSE)
 [![Conda](https://img.shields.io/conda/pn/conda-forge/starz?color=black)](https://www.lifewire.com/what-is-noarch-package-2193808)
 [![Supported Python versions](https://img.shields.io/badge/python-%3E%3D3.8-black)](https://www.python.org/downloads/)
@@ -13,7 +11,7 @@
 
 [![Conda (channel only)](https://img.shields.io/conda/vn/conda-forge/Semi-ATE-installer?color=blue&label=conda-forge)](https://anaconda.org/conda-forge/semi-ate-installer)  [![conda-forge feedstock](https://img.shields.io/github/issues-pr/conda-forge/Semi-ATE-Installer-feedstock?label=feedstock)](https://github.com/conda-forge/semi-ate-installer-feedstock)
 
-The installation package that will install the correct Semi-ATE packages depending on the use-case.
+The installation package that will install the correct [Semi-ATE packages](https://github.com/Semi-ATE/Semi-ATE) depending on the use-case.
 
 ## Installation
 
