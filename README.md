@@ -17,6 +17,6 @@ The installation package that will install the correct [Semi-ATE packages](https
 
 Make sure that conda is installed via [maxiconda](https://www.maxiconda.org/). This brings `conda` **and** `mamba` to your system. It is **IMPERATIVE** that this package is installed in the `base` environment! 
 
-1. `conda activate base`
-2. `mamba install Semi-ATE-Installer`
-3. Execute `ate-installer` and follow the installer.
+1. Go to the base environment : `conda activate base`
+2. Install the Semi-ATE Installer : `mamba install Semi-ATE-Installer`
+3. Install Semi-ATE in an environment : `ate-installer`, select the environment and follow the installer.
