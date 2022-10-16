@@ -12,6 +12,8 @@
 [![GitHub issues](https://img.shields.io/github/issues/Semi-ATE/Semi-ATE-Installer)](https://github.com/Semi-ATE/Semi-ATE-Installer/issues)
 [![GitHub pull requests](https://img.shields.io/github/issues-pr/Semi-ATE/Semi-ATE-Installer)](https://github.com/Semi-ATE/Semi-ATE-Installer/pulls)
 
+[![Conda (channel only)](https://img.shields.io/conda/vn/conda-forge/Semi-ATE-installer?color=blue&label=conda-forge)](https://anaconda.org/conda-forge/semi-ate-installer)  [![conda-forge feedstock](https://img.shields.io/github/issues-pr/conda-forge/Semi-ATE-Installer-feedstock?label=feedstock)](https://github.com/conda-forge/semi-ate-installer-feedstock)
+
 The installation package that will install the correct Semi-ATE packages depending on the use-case.
 
 ## Requirements
