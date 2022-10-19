@@ -8,23 +8,28 @@ from packaging import version
 
 from semi_ate_installer.utils.packages import PackageInfo
 
+
 class Repository:
     @staticmethod
-    def get_available_versions(package_query: str, channel: str = 'conda-forge') -> List[PackageInfo]:
+    def get_available_versions(
+        package_query: str, channel: str = "conda-forge"
+    ) -> List[PackageInfo]:
         pool = repoquery_api.create_pool([channel], context.platform, False)
-        query_result: dict = loads(repoquery_api._repoquery('search', package_query, pool)).get('result')
+        query_result: dict = loads(
+            repoquery_api._repoquery("search", package_query, pool)
+        ).get("result")
 
-        if query_result['status'] != 'OK':
+        if query_result["status"] != "OK":
             return []
 
         packages = {}
 
-        for p in query_result['pkgs']:
-            packages.setdefault(p['name'], []).append(p.get('version'))
-        
+        for p in query_result["pkgs"]:
+            packages.setdefault(p["name"], []).append(p.get("version"))
+
         package_set = []
         for name, vers in packages.items():
-            highest_version = version.parse('0.0.0')
+            highest_version = version.parse("0.0.0")
             for ver1, ver2 in itertools.combinations(vers, 2):
                 ver1_obj = version.parse(ver1)
                 ver2_obj = version.parse(ver2)

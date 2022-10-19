@@ -1,3 +1,0 @@
-[flake8]
-ignore = E501,  # line to long
-         W503,  # line break binary operator

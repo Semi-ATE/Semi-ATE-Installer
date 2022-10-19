@@ -6,7 +6,12 @@ from packaging import version
 
 from semi_ate_installer.environment.handler import EnvironmentHandler
 from semi_ate_installer.utils.profiles import Profiles
-from semi_ate_installer.state.base import BaseState, BaseStateMachine, BaseStateWithInput, State
+from semi_ate_installer.state.base import (
+    BaseState,
+    BaseStateMachine,
+    BaseStateWithInput,
+    State,
+)
 
 
 class InitOptions(IntEnum):
@@ -21,9 +26,12 @@ class YesNoOption(IntEnum):
 
 class Init(BaseState):
     def next(self) -> BaseState:
-        new = Choice('create new environment: ', value=InitOptions.New)
-        exist = Choice('list available environments: ', value=InitOptions.Exist)
-        option = questionary.select('select option: ', [new, exist], ).ask()
+        new = Choice("create new environment: ", value=InitOptions.New)
+        exist = Choice("list available environments: ", value=InitOptions.Exist)
+        option = questionary.select(
+            "select option: ",
+            [new, exist],
+        ).ask()
 
         if option == InitOptions.Exist:
             existing_envs = EnvironmentHandler.get_available_environments()
@@ -38,7 +46,9 @@ class SelectEnv(BaseStateWithInput):
         self.env_list = env_list
 
     def next(self) -> BaseState:
-        selected_env = questionary.select('select environment of interest', self.env_list).ask()
+        selected_env = questionary.select(
+            "select environment of interest", self.env_list
+        ).ask()
         return CheckPackagesUpdate(selected_env)
 
 
@@ -54,38 +64,52 @@ class CheckPackagesUpdate(BaseStateWithInput):
 
         return EnvSelected(self.env_name)
 
+
 class UpdatePackages(BaseStateWithInput):
-    def __init__(self, env_name: str, available_updates: List[Tuple[str, version.Version, version.Version]]):
+    def __init__(
+        self,
+        env_name: str,
+        available_updates: List[Tuple[str, version.Version, version.Version]],
+    ):
         super().__init__(env_name)
         self.env_name = env_name
         self.available_updates = available_updates
 
     def next(self) -> BaseState:
-        print('update for the following packages is available: ')
+        print("update for the following packages is available: ")
         for available_update in self.available_updates:
-            print(f'{available_update[0]}: {available_update[1]} -> {available_update[2]}')
+            print(
+                f"{available_update[0]}: {available_update[1]} -> {available_update[2]}"
+            )
 
-        no = Choice('no:', value=YesNoOption.No)
-        yes = Choice('yes:', value=YesNoOption.Yes)
-        option = questionary.select('updates are available, do update:', [no, yes], ).ask()
+        no = Choice("no:", value=YesNoOption.No)
+        yes = Choice("yes:", value=YesNoOption.Yes)
+        option = questionary.select(
+            "updates are available, do update:",
+            [no, yes],
+        ).ask()
 
         if option == YesNoOption.No:
             return EnvSelected(self.env_name)
 
-        package_to_update = [f'{name}={str(info.version)}' for name, _, info in self.available_updates]
+        package_to_update = [
+            f"{name}={str(info.version)}" for name, _, info in self.available_updates
+        ]
         EnvironmentHandler.install_packages(self.env_name, package_to_update)
 
 
 class NewEnv(BaseState):
     def next(self) -> BaseState:
-        env_name = questionary.text('insert the new environment name:', validate=lambda input: input is not None).ask()
+        env_name = questionary.text(
+            "insert the new environment name:", validate=lambda input: input is not None
+        ).ask()
         if not env_name:
-            print(f'environment name is empty')
+            print(f"environment name is empty")
             return None
 
         existing_envs = EnvironmentHandler.get_available_environments()
         if env_name in existing_envs:
-            print(f'environment: \'{env_name}\' exists already')
+            print(f"environment: '{env_name}' exists already")
             return None
 
         return SelectProfile(env_name)
@@ -97,7 +121,9 @@ class SelectProfile(BaseStateWithInput):
         self.env_name = env_name
 
     def next(self) -> BaseState:
-        selected_profile = questionary.select('select profile', Profiles.get_fields()).ask()
+        selected_profile = questionary.select(
+            "select profile", Profiles.get_fields()
+        ).ask()
         return CreateEnv(self.env_name, selected_profile)
 
 
@@ -110,7 +136,9 @@ class CreateEnv(BaseStateWithInput):
     def next(self) -> BaseState:
         packages = EnvironmentHandler.get_packages(self.profile)
         EnvironmentHandler.create_env(self.env_name)
-        EnvironmentHandler.install_packages(self.env_name, EnvironmentHandler.get_packages_with_version(packages))
+        EnvironmentHandler.install_packages(
+            self.env_name, EnvironmentHandler.get_packages_with_version(packages)
+        )
         return EnvSelected(self.env_name)
 
 

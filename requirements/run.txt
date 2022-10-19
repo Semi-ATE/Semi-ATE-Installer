@@ -1,3 +1,0 @@
-questionary==1.10.0
-pyfiglet>=0.8
-packaging
