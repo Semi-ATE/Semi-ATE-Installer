@@ -2,6 +2,7 @@ from setuptools import find_packages, setup
 from pathlib import Path
 
 requirements_path = Path(Path(__file__).parents[0], 'requirements/run.txt')
+print(f">>>>> requiremets_path ={requirements_path}")
 
 with requirements_path.open('r') as f:
     install_requires = list(f)
