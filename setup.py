@@ -7,6 +7,7 @@ print(f">>>>> requiremets_path ={requirements_path}")
 with requirements_path.open('r') as f:
     install_requires = list(f)
 
+print(install_requires)
 
 setup(
     name='semi-ate-installer',
