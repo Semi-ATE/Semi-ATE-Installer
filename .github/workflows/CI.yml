@@ -6,47 +6,6 @@ on:
   pull_request:
     branches: [main]
 
-#jobs:
-#  do-test:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v4
-#
-#      - name: Install micromamba & environment
-#        uses: mamba-org/setup-micromamba@v2.0.3
-#        with:
-#          environment-file: environment.yml
-#
-#      - name: Run tests
-#        shell: bash -l {0}
-#        run: |
-#          pytest tests/ --cov=STDF
-
-#      - name: Check package
-#        shell: bash -l {0}
-#        run: |
-#          python setup.py sdist
-#          twine check dist/*
-
-#      - name: Check manifest 
-#        shell: bash -l {0}
-#        run: |
-#          check-manifest
-#  test-linux:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: dummy
-#        shell: bash -l {0}
-#        run: echo "dummy"
-
-#  test-windows:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: dummy
-#        shell: bash -l {0}
-#        run: echo "dummy"
-
 
 jobs:
   build:
@@ -57,9 +16,9 @@ jobs:
     - name: checkout
       uses: actions/checkout@v4
     
-    - name: tag to python-version
+    - name: tag to version
       shell: bash -l {0}
-      run: echo "__version__='1.2.3'" >> semi_ate_installer/__init__.py
+      run: echo "__version__='0.0.0'" >> semi_ate_installer/__init__.py
 
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -70,19 +29,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install build
-        
-    - name: directory structure
-      shell: bash -l {0}
-      run: |
-        pwd
-        tree
-        cat semi_ate_installer/__init__.py
       
     - name: Build package
       run: python -m build
       
-#    - name: Publish package
-#      uses: pypa/gh-action-pypi-publish@27b31702a0e7fc50959f5ad993c78deac1bdfc29
-#      with:
-#        user: __token__
-#        password: ${{ secrets.PYPI_TOKEN }}
