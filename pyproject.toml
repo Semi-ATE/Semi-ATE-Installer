@@ -25,6 +25,7 @@ classifiers = [
 ]
 dependencies = [
     "packaging",
+    "mamba",
     "pyfiglet>=0.8",
     "questionary==1.10.0",
 ]
