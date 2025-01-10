@@ -1,3 +1,4 @@
+import sys
 import pyfiglet
 
 from semi_ate_installer.state.state_machine import NewEnvSM
@@ -11,6 +12,8 @@ def print_semi_ate_installer_banner():
 
 def main():
     print_semi_ate_installer_banner()
+    if not sys.stdin.isatty():
+        return
 
     state_machine = NewEnvSM()
     while state_machine.is_done() != State.Done:

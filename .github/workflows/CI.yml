@@ -15,10 +15,6 @@ jobs:
     steps:
     - name: checkout
       uses: actions/checkout@v4
-    
-    - name: tag to version
-      shell: bash -l {0}
-      run: echo "__version__='0.0.0'" >> semi_ate_installer/__init__.py
 
     - name: Set up Python
       uses: actions/setup-python@v5
